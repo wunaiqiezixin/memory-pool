@@ -2,7 +2,7 @@
 
 namespace memoryPool {
 
-MemoryPool::MemoryPool(size_t BlockSize = 4096)
+MemoryPool::MemoryPool(size_t BlockSize)
     : BlockSize_(BlockSize)
 {}
 
@@ -165,7 +165,14 @@ HashBucket::getMemoryPool(size_t index)
 void*
 HashBucket::useMemory(size_t size)
 {
-    assert(size >= 0 && size < MEMORYPOOL_NUM);
+    if (size <= 0)
+    {
+        return nullptr;
+    }
+    if (size > SLOT_MAX_SIZE)
+    {
+        return ::operator new(size);
+    }
     return getMemoryPool((size + SLOT_BASE_SIZE - 1) / SLOT_BASE_SIZE - 1).allocate(size);
 }
 

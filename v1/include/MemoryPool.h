@@ -6,12 +6,13 @@
 #include <mutex>
 #include <memory>
 #include <atomic>
+using byte_pointer = unsigned char*;
 
 namespace memoryPool {
 #define MEMORYPOOL_NUM  64
 #define SLOT_BASE_SIZE   8
 #define SLOT_MAX_SIZE  512
-using byte_pointer = unsigned char*;
+
 struct Slot
 {
     std::atomic<Slot*> next;//原子指针，保证操作的原子性
