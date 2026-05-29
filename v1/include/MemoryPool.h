@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cassert>
 #include <cstddef>
+#include <utility>
 #include <mutex>
 #include <memory>
 #include <atomic>
@@ -18,12 +20,12 @@ struct Slot
 class MemoryPool
 {
 public:
-    MemoryPool(size_t BlockSize);
+    MemoryPool(size_t BlockSize = 4096);
     ~MemoryPool();
     void init(size_t SlotSize);
 
     void* allocate(size_t size);
-    void deallocate(Slot* p);
+    void deallocate(void* p);
 
 private:
     void allocateNewBlock();
@@ -48,16 +50,43 @@ class HashBucket
 public:
     static void initMemoryPool();
     static void* useMemory(size_t size);
-    static void freeMemory(void* p);
+    static void freeMemory(void* p, size_t size);
     static MemoryPool& getMemoryPool(size_t index);
 
     template <typename T, typename... Args>
-    T* newElement(Args&&... args);
+    friend T* newElement(Args&&... args);
     
     template <typename T> 
-    void deleteElement();
+    friend void deleteElement(T* p);
 };
 
 
-
+template <typename T, typename... Args>
+T*
+newElement(Args&&... args)
+{
+    T* p = reinterpret_cast<T*>(HashBucket::useMemory(sizeof(T)));
+    if (p)
+    {
+        new(p) T(std::forward<Args>(args)...);
+    }
+    return p;
 }
+
+
+template <typename T>
+void 
+deleteElement(T* p)
+{
+    if (p == nullptr)
+    {
+        return;
+    }
+    p->~T();
+    HashBucket::getMemoryPool(
+        (sizeof(T) + SLOT_BASE_SIZE - 1) / SLOT_BASE_SIZE
+    ).deallocate(p);
+}
+
+
+} // namespace memoryPool
