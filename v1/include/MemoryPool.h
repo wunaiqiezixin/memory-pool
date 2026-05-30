@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cstddef>
+#include <cstdint>
 #include <utility>
 #include <mutex>
 #include <memory>
@@ -84,9 +85,7 @@ deleteElement(T* p)
         return;
     }
     p->~T();
-    HashBucket::getMemoryPool(
-        (sizeof(T) + SLOT_BASE_SIZE - 1) / SLOT_BASE_SIZE
-    ).deallocate(p);
+    HashBucket::freeMemory(reinterpret_cast<void*>(p), sizeof(T));
 }
 
 

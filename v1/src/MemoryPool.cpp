@@ -105,11 +105,10 @@ MemoryPool::padPointer(byte_pointer p, size_t align)
 void* 
 MemoryPool::allocate(size_t size)
 {
-    assert(size > 0);
-    if (size > SLOT_MAX_SIZE)
+    if (size <= 0)
     {
-        return ::operator new(size);
-    } 
+        return nullptr;
+    }
     //优先检查空闲链表是否为空
     Slot* slot = popFreeList();
     if (slot)
@@ -117,15 +116,14 @@ MemoryPool::allocate(size_t size)
         return slot;
     }
     //检查内存块是否够用
+    std::lock_guard<std::mutex> lock(mutexForBlock_);
     if (currentSlot_ >= lastSlot_)
     {
-        //加锁，保证线程安全
-        std::lock_guard<std::mutex> lock(mutexForBlock_);
         allocateNewBlock();
     }
     //返回下一个空闲内存槽
-    void* ret = currentSlot_;
-    currentSlot_ += SlotSize_;
+    void* ret = reinterpret_cast<void*>(currentSlot_);
+    currentSlot_ += SlotSize_ / sizeof(Slot);
     return ret;
 }
 
@@ -136,12 +134,7 @@ MemoryPool::deallocate(void* p)
     {
         return;
     }
-    if (SlotSize_ > SLOT_MAX_SIZE)
-    {
-        ::operator delete(p);
-        return;
-    }    
-    pushFreeList(reinterpret_cast<Slot*>(p));
+    pushFreeList(static_cast<Slot*>(p));
 }
 
 
