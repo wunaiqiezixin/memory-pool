@@ -3,7 +3,7 @@
 #include <thread>
 #include <string>
 
-#include "include/MemoryPool.h"
+#include "../include/MemoryPool.h"
 using namespace memoryPool;
 
 //计时器

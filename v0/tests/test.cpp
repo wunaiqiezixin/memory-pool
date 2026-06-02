@@ -40,8 +40,8 @@
 #include <time.h>
 #include <vector>
 
-#include "src/MemoryPool.h"
-#include "StackAlloc.h"
+#include "../include/MemoryPool.h"
+#include "../include/StackAlloc.h"
 
 /* Adjust these values depending on how much you trust your computer */
 #define ELEMS 1000000
