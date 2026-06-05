@@ -1,5 +1,6 @@
 #pragma once
 #include <cstddef>
+#include <cstdlib>
 #include <atomic>
 #include <array>
 using byte_pointer = unsigned char*;
@@ -20,7 +21,7 @@ struct BlockHeader
 class SizeClass
 {
 public:
-    size_t getIndex(size_t bytes) 
+    static size_t getIndex(size_t bytes) 
     {
         //确保bytes至少为ALIGNMENT
         bytes = std::max(bytes, ALIGNMENT);
@@ -28,7 +29,7 @@ public:
         return (bytes + ALIGNMENT - 1) / ALIGNMENT - 1;
     }
 
-    size_t roundUp(size_t bytes)
+    static size_t roundUp(size_t bytes)
     {
         //bytes + ALIGNMENT - 1 将不是8的整数倍的bytes抬到下一个区间
         //最后三位是0的数一定是8的整数倍
