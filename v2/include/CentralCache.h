@@ -1,4 +1,5 @@
 #pragma once
+#include "Common.h"
 #include <atomic>
 #include <chrono>
 #include <array>

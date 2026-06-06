@@ -6,11 +6,11 @@ namespace memoryPool {
 class MemoryPool
 {
 public:
-    void* allocate(size_t size)
+    static void* allocate(size_t size)
     {
-        ThreadCache::getInstance()->allocate(size);
+        return ThreadCache::getInstance()->allocate(size);
     }
-    void deallocate(void* ptr, size_t size)
+    static void deallocate(void* ptr, size_t size)
     {
         ThreadCache::getInstance()->deallocate(ptr, size);
     }
