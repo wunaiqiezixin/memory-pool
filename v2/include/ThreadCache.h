@@ -8,7 +8,7 @@ class ThreadCache
 {
 public:
     //单例模式
-    ThreadCache* getInstance()
+    static ThreadCache* getInstance()
     {
         static thread_local ThreadCache instance;
         return &instance;

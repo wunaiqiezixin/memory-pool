@@ -1,43 +1,26 @@
 #include <iostream>
-#include <ctime>
-#include "include/MemoryPool.h"
+#include <chrono>
+#include "../include/MemoryPool.h"
 #include <memory>
-using namespace std;
 
-#define ELEMS 1000000
-#define REPS 50
-
-
-int main()
+class Timer
 {
-    clock_t start, end;
-    //使用MemoryPool
-    MemoryPool<size_t, 4096> memoryPool;
-    start = clock();
-    for (size_t i = 0; i < REPS; ++i)
+public:
+    Timer()
     {
-        for (size_t j = 0; j < ELEMS; ++j)
-        {
-            size_t* p = memoryPool.newElement(1);
-            memoryPool.deleteElement(p);
-        }
+        m_StartTimepoint = std::chrono::high_resolution_clock::now();
     }
-    end = clock();
-    cout << "newElement/deleteElemnet: " << ((double)end - start) / CLOCKS_PER_SEC;
-    cout << "\n\n";
+    ~Timer()
+    {
+        auto endTimepoint = std::chrono::high_resolution_clock::now();
+        
+        auto start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint);
+        auto end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint);
 
-    //直接调用new/delete
-    allocator<size_t> alloc;
-    start = clock();
-    for (size_t i = 0; i < REPS; ++i)
-    {
-        for (size_t j = 0; j < ELEMS; ++j)
-        {
-            size_t* p = new size_t;
-            delete p;
-        }
+        auto duration = end - start;
+
+        std::cout << duration.count() << "us" << std::endl;
     }
-    end = clock();
-    cout << "new/delete" << "              : " 
-    << ((double)end - start) / CLOCKS_PER_SEC;
-}
+private:
+    std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTimepoint;    
+};

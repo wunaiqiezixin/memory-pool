@@ -25,7 +25,7 @@ public:
     }
     //向ThreadCache提供的接口
     void* fetchRange(size_t index);
-    void  returnRange(void* ptr, size_t size, size_t index);
+    void  returnRange(void* start, size_t size, size_t index);
 
 private:
     //相互是还所有原子指针为nullptr
@@ -45,8 +45,7 @@ private:
 
     //使用数组存储Span信息，避免map的开销
     std::array<SpanTracker, 1024> spanTrackers_;
-    std::array<std::atomic<size_t>, 1024> spanCount_{0};
-
+    std::atomic<size_t> spanCount_{0};
     //延迟归还相关的成员变量
     static const size_t MAX_DELAY_COUNT = 48; //最大延迟计数
     std::array<std::atomic<size_t>, FREE_LIST_SIZE> delayCounts_;//每个大小类的延迟计数
