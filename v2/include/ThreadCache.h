@@ -1,4 +1,5 @@
 #pragma once
+#include <cassert>
 #include "Common.h"
 
 namespace memoryPool {

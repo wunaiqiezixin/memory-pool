@@ -63,7 +63,7 @@ bool
 ThreadCache::shouldReturnToCentralCache(size_t index)
 {
     constexpr size_t threshold = 256;//阈值
-    return freeListSize_[index] * ALIGNMENT > threshold;
+    return freeListSize_[index] > threshold;
 }
 
 
