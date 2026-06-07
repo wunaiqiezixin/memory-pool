@@ -10,10 +10,10 @@ namespace memoryPool {
 
 struct SpanTracker
 {
-    std::atomic<void*> spanAddr{nullptr};  //span对应的连续内存页的起始地址
-    std::atomic<size_t> numPages{0};       //span的内存页数量
-    std::atomic<size_t> blockCount{0};     //内存页被切分的内存块数
-    std::atomic<size_t> freeCount{0};      //空闲的内存块数 
+    std::atomic<void*>  spanAddr{nullptr};  //span对应的连续内存页的起始地址
+    std::atomic<size_t> numPages{0};        //span的内存页数量
+    std::atomic<size_t> blockCount{0};      //内存页被切分的内存块数
+    std::atomic<size_t> freeCount{0};       //空闲的内存块数 
 };
 
 class CentralCache

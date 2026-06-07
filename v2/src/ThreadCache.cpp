@@ -71,7 +71,6 @@ void*
 ThreadCache::fetchFromCentralCache(size_t index)
 {
     //对应空闲链表大小为空，向中心缓存申请内存
-    size_t size = freeListSize_[index] * ALIGNMENT;
     void* start = CentralCache::getInstance().fetchRange(index);
     if (!start)
     {
@@ -128,7 +127,8 @@ ThreadCache::returnToCentralCache(void* ptr, size_t size)
     
     if (returnNum > 0 && nextNode)
     {
-        returnToCentralCache(nextNode, returnNum * alignedSize);
+        //调用中心缓存提供的接口
+        CentralCache::getInstance().returnRange(nextNode, returnNum * alignedSize, index);
     }
 }
 
